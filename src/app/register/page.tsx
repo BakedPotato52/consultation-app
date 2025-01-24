@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { hash } from "bcrypt"
+import bcrypt from 'bcrypt';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,7 +21,7 @@ export default function Register() {
         try {
             const formData = new FormData(event.currentTarget)
             const password = formData.get("password") as string
-            const hashedPassword = await hash(password, 10)
+            const hashedPassword = await bcrypt.hash(password, 10)
 
             const response = await fetch("/api/register", {
                 method: "POST",
