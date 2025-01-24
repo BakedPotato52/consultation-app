@@ -19,6 +19,7 @@
     "bcrypt": "^5.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "file-loader": "^6.2.0",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
     "next-auth": "^4.22.3",
@@ -27,7 +28,9 @@
     "socket.io": "^4.7.1",
     "socket.io-client": "^4.7.1",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "ts-loader": "^9.5.2",
+    "url-loader": "^4.1.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
