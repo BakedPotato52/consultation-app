@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "@/hooks/use-toast"
 
 export default function Register() {
     const [isLoading, setIsLoading] = useState(false)
@@ -95,7 +95,7 @@ export default function Register() {
                         <Button type="submit" className="w-full" disabled={isLoading}>
                             {isLoading ? "Creating account..." : "Register"}
                         </Button>
-                        <Button variant="outline" className="w-full" onClick={() => router.push("/login")} type="button">
+                        <Button className="w-full" onClick={() => router.push("/login")} type="button">
                             Already have an account? Sign in
                         </Button>
                     </CardFooter>
