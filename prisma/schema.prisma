@@ -1,46 +1,45 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider  = "postgresql"
-    url       = env("DATABASE_URL") // uses connection pooling
-    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id                        String         @id @default(cuid())
-    name                      String
-    email                     String         @unique
-    password                  String
-    role                      Role           @default(PATIENT)
-    createdAt                 DateTime       @default(now())
-    updatedAt                 DateTime       @updatedAt
-    patientConsultations      Consultation[] @relation("PatientConsultations")
-    psychiatristConsultations Consultation[] @relation("PsychiatristConsultations")
+  id                        String         @id @default(cuid())
+  name                      String
+  email                     String         @unique
+  password                  String
+  role                      Role           @default(PATIENT)
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @updatedAt
+  patientConsultations      Consultation[] @relation("PatientConsultations")
+  psychiatristConsultations Consultation[] @relation("PsychiatristConsultations")
 }
 
 model Consultation {
-    id             String             @id @default(cuid())
-    patientId      String
-    psychiatristId String
-    startTime      DateTime
-    endTime        DateTime
-    cost           Float
-    status         ConsultationStatus @default(SCHEDULED)
-    createdAt      DateTime           @default(now())
-    updatedAt      DateTime           @updatedAt
-    patient        User               @relation("PatientConsultations", fields: [patientId], references: [id])
-    psychiatrist   User               @relation("PsychiatristConsultations", fields: [psychiatristId], references: [id])
+  id             String             @id @default(cuid())
+  patientId      String
+  psychiatristId String
+  startTime      DateTime
+  endTime        DateTime
+  cost           Float
+  status         ConsultationStatus @default(SCHEDULED)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  patient        User               @relation("PatientConsultations", fields: [patientId], references: [id])
+  psychiatrist   User               @relation("PsychiatristConsultations", fields: [psychiatristId], references: [id])
 }
 
 enum Role {
-    PATIENT
-    PSYCHIATRIST
+  PATIENT
+  PSYCHIATRIST
 }
 
 enum ConsultationStatus {
-    SCHEDULED
-    COMPLETED
-    CANCELLED
+  SCHEDULED
+  COMPLETED
+  CANCELLED
 }
