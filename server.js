@@ -9,7 +9,7 @@ const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url!, true)
+    const parsedUrl = parse(req.url, true)
     handle(req, res, parsedUrl)
   })
 
@@ -28,8 +28,8 @@ app.prepare().then(() => {
     })
   })
 
-  server.listen(3000, () => {
-    console.log("> Ready on http://localhost:3000")
+  server.listen(4000, () => {
+    console.log("> Ready on http://localhost:4000")
   })
 })
 
