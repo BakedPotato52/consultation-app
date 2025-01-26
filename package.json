@@ -1,7 +1,6 @@
 {
   "name": "--templet",
   "version": "0.1.0",
-  "type": "commonjs",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -31,9 +30,7 @@
     "socket.io": "^4.7.1",
     "socket.io-client": "^4.7.1",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "ts-loader": "^9.5.2",
-    "url-loader": "^4.1.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -46,5 +43,8 @@
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.1",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
