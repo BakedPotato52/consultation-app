@@ -4,7 +4,9 @@ import next from "next"
 import { Server } from "socket.io"
 
 const dev = process.env.NODE_ENV !== "production"
-const app = next({ dev })
+const hostname = "localhost"
+const port = 4000
+const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
@@ -28,8 +30,8 @@ app.prepare().then(() => {
     })
   })
 
-  server.listen(4000, () => {
-    console.log("> Ready on http://localhost:4000")
+  server.listen(port, () => {
+    console.log(`> Ready on http://${hostname}:${port}`)
   })
 })
 

@@ -1,83 +1,141 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from '@/components/ui/label'
+import { motion } from "framer-motion";
+import { toast } from 'sonner'
+import Link from 'next/link'
 
-export default function Login() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+export default function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/game'
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    })
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: true,
+        callbackUrl
+      })
 
-    if (result?.error) {
-      // Handle error
-      console.error(result.error)
-    } else {
-      router.push("/dashboard")
+      if (result?.error) {
+        toast.error(result.error)
+        setError(result.error as string)
+      } else {
+        router.push('/dashboard')
+        toast.success('Logged in successfully')
+      }
+    } catch (error) {
+      toast.error('An error occurred during login')
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" value="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-full max-w-md overflow-hidden">
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className="h-2 bg-gradient-to-r from-purple-500 to-indigo-500"
+          />
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <motion.form
+              onSubmit={handleSubmit}
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
             >
-              Sign in
-            </button>
-          </div>
-        </form>
-      </div>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 text-sm text-red-600 bg-red-100 border border-red-600 rounded"
+                >
+                  {error}
+                </motion.div>
+              )}
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  type="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  disabled={isLoading}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  type="password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
+              </Button>
+            </motion.form>
+            <div className="mt-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                Don't have an account?{" "}
+                <Link href="/signup" className="underline underline-offset-4 hover:text-primary">
+                  Sign up
+                </Link>
+              </p>
+            </div>
+            <div className="mt-4 text-center">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   )
 }

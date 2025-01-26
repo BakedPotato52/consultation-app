@@ -2,6 +2,11 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { db } from "./db"
+import type { User } from "@prisma/client"
+
+type ExtendedUser = User & {
+  role: string
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -18,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "john@example.com" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<ExtendedUser | null> {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
@@ -33,9 +38,9 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const isPasswordValid = (credentials.password === user.password)
+        const isCorrectPassword = credentials.password == user.password
 
-        if (!isPasswordValid) {
+        if (!isCorrectPassword) {
           return null
         }
 
@@ -44,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
-        }
+        } as ExtendedUser
       },
     }),
   ],
@@ -55,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.id,
-          role: token.role,
+          role: (token as unknown as ExtendedUser).role,
         },
       }
     },
@@ -64,7 +69,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           id: user.id,
-          role: user.role,
+          role: (user as ExtendedUser).role,
         }
       }
       return token
