@@ -1,18 +1,57 @@
+'use client'
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CalendarDays, Clock } from "lucide-react"
 import { ConsultationList } from "../../components/patient/consultation-list"
 import { format } from "date-fns"
-import { getConsultations } from "../../lib/consultations"
 import type { Session } from "next-auth"
 
-interface PatientDashboardProps {
-    session: Session | null
+interface Consultation {
+    id: string
+    startTime: string
+    endTime: string
+    cost: number
+    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
+    psychiatrist: {
+        name: string
+    }
 }
 
-export async function PatientDashboard({ session }: PatientDashboardProps) {
-    const { upcoming: upcomingConsultations, past: pastConsultations } = await getConsultations(session?.user?.id)
+interface PatientDashboardProps {
+    session: Session
+}
+
+export function PatientDashboard({ session }: PatientDashboardProps) {
+    const [upcomingConsultations, setUpcomingConsultations] = useState<Consultation[]>([])
+    const [pastConsultations, setPastConsultations] = useState<Consultation[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchConsultations = async () => {
+            try {
+                const response = await fetch("/api/consultations")
+                if (!response.ok) {
+                    throw new Error("Failed to fetch consultations")
+                }
+                const data = await response.json()
+                setUpcomingConsultations(data.upcoming)
+                setPastConsultations(data.past)
+            } catch (error) {
+                console.error("Error fetching consultations:", error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchConsultations()
+    }, [])
+
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
+
 
     const nextConsultation = upcomingConsultations[0]
 
