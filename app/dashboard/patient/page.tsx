@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { PatientDashboard } from "../../components/patient/pdashboard"
+import { PatientDashboardWrapper } from "@/app/components/patient/dashboard-wrapper"
 
 export const metadata: Metadata = {
     title: "Patient Dashboard",
@@ -7,6 +7,6 @@ export const metadata: Metadata = {
 }
 
 export default function PatientDashboardPage() {
-    return <PatientDashboard />
+    return <PatientDashboardWrapper />
 }
 

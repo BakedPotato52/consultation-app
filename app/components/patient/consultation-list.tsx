@@ -1,11 +1,15 @@
+"use client"
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 
 interface Consultation {
     id: string
-    startTime: string
-    endTime: string
+    patientId: string
+    psychiatristId: string
+    startTime: Date
+    endTime: Date
     cost: number
     status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
     psychiatrist: {
@@ -32,16 +36,16 @@ export function ConsultationList({ consultations }: ConsultationListProps) {
             <TableBody>
                 {consultations.map((consultation) => (
                     <TableRow key={consultation.id}>
-                        <TableCell>{format(new Date(consultation.startTime), "PP")}</TableCell>
+                        <TableCell>{format(consultation.startTime, "PP")}</TableCell>
                         <TableCell>
-                            {format(new Date(consultation.startTime), "p")} - {format(new Date(consultation.endTime), "p")}
+                            {format(consultation.startTime, "p")} - {format(consultation.endTime, "p")}
                         </TableCell>
                         <TableCell>Dr. {consultation.psychiatrist.name}</TableCell>
                         <TableCell>
                             <Badge
                                 variant={
                                     consultation.status === "COMPLETED"
-                                        ? "success"
+                                        ? "secondary"
                                         : consultation.status === "CANCELLED"
                                             ? "destructive"
                                             : "default"
