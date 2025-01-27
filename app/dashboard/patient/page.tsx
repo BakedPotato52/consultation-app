@@ -1,11 +1,12 @@
-import React from 'react'
+import type { Metadata } from "next"
+import { PatientDashboard } from "../../components/patient/pdashboard"
 
-function Patient() {
-    return (
-        <div>
-
-        </div>
-    )
+export const metadata: Metadata = {
+    title: "Patient Dashboard",
+    description: "View your health information and upcoming appointments",
 }
 
-export default Patient
+export default function PatientDashboardPage() {
+    return <PatientDashboard />
+}
+

@@ -1,32 +1,60 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { CalendarDays, FileText, MessageCircle, Phone, PlusCircle } from "lucide-react"
+import { CalendarDays, Clock } from "lucide-react"
+import { ConsultationList } from "../../components/patient/consultation-list"
+import { format } from "date-fns"
+
+interface User {
+    id: string
+    name: string
+    email: string
+    role: "PATIENT" | "PSYCHIATRIST"
+}
+
+interface Consultation {
+    id: string
+    patientId: string
+    psychiatristId: string
+    startTime: string
+    endTime: string
+    cost: number
+    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
+    psychiatrist: User
+}
 
 export function PatientDashboard() {
-    const [date, setDate] = useState<Date | undefined>(new Date())
+    const { data: session } = useSession()
+    const [upcomingConsultations, setUpcomingConsultations] = useState<Consultation[]>([])
+    const [pastConsultations, setPastConsultations] = useState<Consultation[]>([])
 
-    // Mock data - in a real app, this would come from an API
-    const patientInfo = {
-        name: "John Doe",
-        age: 35,
-        nextAppointment: "2023-06-15T10:00:00",
-        recentRecords: [
-            { id: 1, type: "Blood Test", date: "2023-05-20" },
-            { id: 2, type: "X-Ray", date: "2023-05-15" },
-        ],
+    useEffect(() => {
+        const fetchConsultations = async () => {
+            if (session?.user?.id) {
+                const response = await fetch(`/api/consultations?patientId=${session.user.id}`)
+                const data = await response.json()
+                setUpcomingConsultations(data.upcoming)
+                setPastConsultations(data.past)
+            }
+        }
+        fetchConsultations()
+    }, [session])
+
+    if (!session?.user) {
+        return <div>Loading...</div>
     }
+
+    const nextConsultation = upcomingConsultations[0]
 
     return (
         <div className="container mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6">Welcome, {patientInfo.name}</h1>
+            <h1 className="text-3xl font-bold mb-6">Welcome, {session.user.name}</h1>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle>Personal Information</CardTitle>
@@ -34,94 +62,58 @@ export function PatientDashboard() {
                     <CardContent>
                         <div className="flex items-center space-x-4">
                             <Avatar className="h-20 w-20">
-                                <AvatarImage src="/placeholder.svg?height=80&width=80" alt={patientInfo.name} />
-                                <AvatarFallback>
-                                    {patientInfo.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
-                                </AvatarFallback>
+                                <AvatarImage src="/placeholder.svg?height=80&width=80" alt={session.user.name} />
+                                <AvatarFallback>{session.user.name[0]}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="text-xl font-semibold">{patientInfo.name}</p>
-                                <p className="text-gray-500">Age: {patientInfo.age}</p>
+                                <p className="text-xl font-semibold">{session.user.name}</p>
+                                <p className="text-gray-500">{session.user.email}</p>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Upcoming Appointment</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-lg font-semibold mb-2">{new Date(patientInfo.nextAppointment).toLocaleString()}</p>
-                        <div className="flex space-x-2">
-                            <Button size="sm" variant="outline">
+                {nextConsultation && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Next Consultation</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-lg font-semibold mb-2">{format(new Date(nextConsultation.startTime), "PPP")}</p>
+                            <p className="text-gray-500 mb-4">
+                                <Clock className="inline mr-2" />
+                                {format(new Date(nextConsultation.startTime), "p")} - {format(new Date(nextConsultation.endTime), "p")}
+                            </p>
+                            <p className="mb-4">With Dr. {nextConsultation.psychiatrist.name}</p>
+                            <Button>
                                 <CalendarDays className="mr-2 h-4 w-4" />
-                                Reschedule
+                                Join Consultation
                             </Button>
-                            <Button size="sm" variant="outline">
-                                <MessageCircle className="mr-2 h-4 w-4" />
-                                Message
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
 
+            <div className="mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Medical Records</CardTitle>
+                        <CardTitle>Upcoming Consultations</CardTitle>
+                        <CardDescription>Your scheduled appointments</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <ul className="space-y-2">
-                            {patientInfo.recentRecords.map((record) => (
-                                <li key={record.id} className="flex justify-between items-center">
-                                    <span>{record.type}</span>
-                                    <Badge variant="secondary">{record.date}</Badge>
-                                </li>
-                            ))}
-                        </ul>
-                        <Button className="w-full mt-4" variant="outline">
-                            <FileText className="mr-2 h-4 w-4" />
-                            View All Records
-                        </Button>
+                        <ConsultationList consultations={upcomingConsultations} />
                     </CardContent>
                 </Card>
+            </div>
 
+            <div className="mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
+                        <CardTitle>Past Consultations</CardTitle>
+                        <CardDescription>Your consultation history</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-2 gap-4">
-                            <Button variant="outline">
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                New Appointment
-                            </Button>
-                            <Button variant="outline">
-                                <Phone className="mr-2 h-4 w-4" />
-                                Contact Doctor
-                            </Button>
-                            <Button variant="outline">
-                                <FileText className="mr-2 h-4 w-4" />
-                                Request Prescription
-                            </Button>
-                            <Button variant="outline">
-                                <MessageCircle className="mr-2 h-4 w-4" />
-                                Send Message
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="md:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Appointment Calendar</CardTitle>
-                        <CardDescription>Schedule and view your appointments</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
+                        <ConsultationList consultations={pastConsultations} />
                     </CardContent>
                 </Card>
             </div>
