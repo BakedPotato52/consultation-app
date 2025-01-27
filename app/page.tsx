@@ -2,12 +2,17 @@ import Link from "next/link"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "./lib/auth"
 import { redirect } from "next/navigation"
+import { useSession } from "next-auth/react"
 
 export default async function Home() {
-  const session = await getServerSession(authOptions)
+  const sessions = await getServerSession(authOptions)
+  const { data: session } = useSession()
+  const role = session?.user?.role
+  console.log(role);
 
-  if (session) {
-    redirect("/dashboard")
+
+  if (sessions) {
+    redirect(`/dashboard/${role}`)
   }
 
   return (

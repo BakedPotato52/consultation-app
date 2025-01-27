@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,9 +17,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/game'
   const router = useRouter()
+  const { data: session } = useSession()
+  const role = session?.user?.role
 
+  const callbackUrl = searchParams.get('callbackUrl') || `/${role}`
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true);
@@ -36,7 +38,7 @@ export default function LoginPage() {
         toast.error(result.error)
         setError(result.error as string)
       } else {
-        router.push('/dashboard')
+        router.push(`/dashboard/${callbackUrl}`)
         toast.success('Logged in successfully')
       }
     } catch (error) {
