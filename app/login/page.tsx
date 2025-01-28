@@ -21,7 +21,7 @@ export default function LoginPage() {
   const { data: session } = useSession()
   const role = session?.user?.role
 
-  const callbackUrl = searchParams.get('callbackUrl') || `/${role}`
+  const callbackUrl = searchParams.get('callbackUrl') || `${role}`
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true);
@@ -38,7 +38,7 @@ export default function LoginPage() {
         toast.error(result.error)
         setError(result.error as string)
       } else {
-        router.push(`/dashboard/${callbackUrl}`)
+        router.push(`/${callbackUrl}`)
         toast.success('Logged in successfully')
       }
     } catch (error) {

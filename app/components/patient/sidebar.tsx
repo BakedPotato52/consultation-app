@@ -7,26 +7,8 @@ import Image from "next/image"
 import { type LucideIcon, MoreHorizontal } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { Home, CalendarDays, FileText, MessageCircle, User, Settings } from "lucide-react"
+import { menuItems } from "../menuItems"
 
-const menuItems = [
-    {
-        title: "Main",
-        items: [
-            { label: "Dashboard", icon: Home, href: "/dashboard/patient", visible: ["patient"] },
-            { label: "Consultations", icon: CalendarDays, href: "/dashboard/patient/consultations", visible: ["patient"] },
-            { label: "Medical Records", icon: FileText, href: "/dashboard/patient/records", visible: ["patient"] },
-            { label: "Messages", icon: MessageCircle, href: "/dashboard/patient/messages", visible: ["patient"] },
-        ],
-    },
-    {
-        title: "Account",
-        items: [
-            { label: "Profile", icon: User, href: "/dashboard/patient/profile", visible: ["patient"] },
-            { label: "Settings", icon: Settings, href: "/dashboard/patient/settings", visible: ["patient"] },
-        ],
-    },
-]
 
 export function PatientSidebar() {
     const [open, setOpen] = useState(false)
@@ -60,7 +42,7 @@ export function PatientSidebar() {
             {/* Desktop Sidebar */}
             <aside className="hidden sticky top-0 md:flex flex-col w-64 h-screen bg-background border-r">
                 <div className="p-4">
-                    <Link href="/dashboard/patient" className="flex items-center gap-2 mb-8" aria-label="ConsultantApp Home">
+                    <Link href=" patient" className="flex items-center gap-2 mb-8" aria-label="ConsultantApp Home">
                         <Image src="/logo.png" className="w-8 h-8" alt="" width={32} height={32} />
                         <span className="font-bold text-xl">ConsultApp</span>
                     </Link>
