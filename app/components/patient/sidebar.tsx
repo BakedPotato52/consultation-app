@@ -41,7 +41,7 @@ export function PatientSidebar() {
             <li key={item.label} className={index >= 4 ? "lg:hidden" : ""}>
                 <Link
                     href={item.href}
-                    className={`flex max-md:flex-col items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 ${isActive
+                    className={`flex sticky bottom-0 max-md:flex-col items-center gap-2 px-3 py-2 rounded-md transition-colors duration-200 ${isActive
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
