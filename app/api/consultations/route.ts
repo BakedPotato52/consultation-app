@@ -11,17 +11,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const { searchParams } = new URL(req.url)
-        const patientId = searchParams.get("patientId")
-
-        if (!patientId) {
-            return NextResponse.json({ error: "Patient ID is required" }, { status: 400 })
-        }
-
-        // Ensure the requesting user can only access their own consultations
-        if (patientId !== session.user.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
-        }
+        const patientId = session.user.id
 
         const now = new Date()
 
@@ -29,7 +19,6 @@ export async function GET(req: NextRequest) {
             where: {
                 patientId: patientId,
                 startTime: { gte: now },
-                status: "SCHEDULED",
             },
             include: {
                 psychiatrist: {
@@ -52,10 +41,9 @@ export async function GET(req: NextRequest) {
             orderBy: { startTime: "desc" },
         })
 
-        // Ensure we're returning an object, even if the arrays are empty
         return NextResponse.json({
-            upcoming: upcomingConsultations || [],
-            past: pastConsultations || [],
+            upcoming: upcomingConsultations,
+            past: pastConsultations,
         })
     } catch (error) {
         console.error("Error in consultations API:", error)
