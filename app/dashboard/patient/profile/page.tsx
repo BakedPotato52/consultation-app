@@ -1,19 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Metadata } from "next"
+import { ProfileContent } from "../../../components/patient/profile-content"
+
+export const metadata: Metadata = {
+    title: "Patient Profile",
+    description: "View and edit your profile information",
+}
 
 export default function ProfilePage() {
-    return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Profile</h1>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Profile Information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p>Your profile information will be displayed here.</p>
-                    {/* Add components for displaying and editing profile information */}
-                </CardContent>
-            </Card>
-        </div>
-    )
+    return <ProfileContent />
 }
 

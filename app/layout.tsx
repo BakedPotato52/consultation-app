@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google"
 import { NextAuthProvider } from "./components/providers/session-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 
 import "@/styles/globals.css"
 
@@ -12,9 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <NextAuthProvider>{children}</NextAuthProvider>
-      </body>
+      <ThemeProvider>
+        <body className={inter.className}>
+          <NextAuthProvider>{children}</NextAuthProvider>
+        </body>
+      </ThemeProvider>
     </html>
   )
 }
