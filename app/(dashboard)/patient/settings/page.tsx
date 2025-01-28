@@ -1,18 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Metadata } from "next"
+import { PatientSettingsForm } from "../../../components/patient/setting-form"
 
-export default function SettingsPage() {
+export const metadata: Metadata = {
+    title: "Patient Settings",
+    description: "Manage your account settings and preferences",
+}
+
+export default function PatientSettingsPage() {
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Settings</h1>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Account Settings</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p>Your account settings will be displayed here.</p>
-                    {/* Add components for managing account settings */}
-                </CardContent>
-            </Card>
+        <div className="container mx-auto py-10">
+            <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+            <PatientSettingsForm />
         </div>
     )
 }
