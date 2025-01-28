@@ -3,19 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
-
-interface Consultation {
-    id: string
-    patientId: string
-    psychiatristId: string
-    startTime: Date
-    endTime: Date
-    cost: number
-    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
-    psychiatrist: {
-        name: string
-    }
-}
+import type { Consultation } from "@/types/consultations"
 
 interface ConsultationListProps {
     consultations: Consultation[]

@@ -6,7 +6,7 @@ import { CalendarDays, FileText, Home, MessageCircle, Settings, User } from "luc
 
 const menuItems = [
     { icon: Home, label: "Dashboard", href: "/dashboard/patient" },
-    { icon: CalendarDays, label: "Appointments", href: "/dashboard/patient/appointments" },
+    { icon: CalendarDays, label: "Consultations", href: "/dashboard/patient/consultations" },
     { icon: FileText, label: "Medical Records", href: "/dashboard/patient/records" },
     { icon: MessageCircle, label: "Messages", href: "/dashboard/patient/messages" },
     { icon: User, label: "Profile", href: "/dashboard/patient/profile" },

@@ -1,23 +1,14 @@
-'use client'
+"use client"
+
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CalendarDays, Clock } from "lucide-react"
-import { ConsultationList } from "../../components/patient/consultation-list"
+import { ConsultationList } from "./consultation-list"
 import { format } from "date-fns"
 import type { Session } from "next-auth"
-
-interface Consultation {
-    id: string
-    startTime: string
-    endTime: string
-    cost: number
-    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
-    psychiatrist: {
-        name: string
-    }
-}
+import type { Consultation, ApiConsultation } from "@/types/consultations"
 
 interface PatientDashboardProps {
     session: Session
@@ -36,8 +27,16 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                     throw new Error("Failed to fetch consultations")
                 }
                 const data = await response.json()
-                setUpcomingConsultations(data.upcoming)
-                setPastConsultations(data.past)
+
+                // Convert API response dates to Date objects
+                const convertConsultation = (consultation: ApiConsultation): Consultation => ({
+                    ...consultation,
+                    startTime: new Date(consultation.startTime),
+                    endTime: new Date(consultation.endTime),
+                })
+
+                setUpcomingConsultations(data.upcoming.map(convertConsultation))
+                setPastConsultations(data.past.map(convertConsultation))
             } catch (error) {
                 console.error("Error fetching consultations:", error)
             } finally {
@@ -51,7 +50,6 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
     if (isLoading) {
         return <div>Loading...</div>
     }
-
 
     const nextConsultation = upcomingConsultations[0]
 
