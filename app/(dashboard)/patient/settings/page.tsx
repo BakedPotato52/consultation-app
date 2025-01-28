@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PatientSettingsPage() {
     return (
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto pb-10">
             <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
             <PatientSettingsForm />
         </div>

@@ -5,6 +5,11 @@ const prisma = new PrismaClient();
 
 async function main() {
     console.log("Seeding database...");
+    // // Delete all Consultations
+    // await prisma.consultation.deleteMany({});
+
+    // // Delete all Users
+    // await prisma.user.deleteMany({});
 
     // Create 15 Patients
     const patients = await Promise.all(
