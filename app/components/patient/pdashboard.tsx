@@ -9,6 +9,7 @@ import { ConsultationList } from "./consultation-list"
 import { format } from "date-fns"
 import type { Session } from "next-auth"
 import type { Consultation, ApiConsultation } from "@/types/consultations"
+import { toast } from "@/components/ui/use-toast"
 
 interface PatientDashboardProps {
     session: Session
@@ -18,15 +19,22 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
     const [upcomingConsultations, setUpcomingConsultations] = useState<Consultation[]>([])
     const [pastConsultations, setPastConsultations] = useState<Consultation[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchConsultations = async () => {
+
+
             try {
-                const response = await fetch("/api/consultations")
+                const response = await fetch(`/api/consultations?patientId=${session.user.id}`)
                 if (!response.ok) {
-                    throw new Error("Failed to fetch consultations")
+                    throw new Error(`HTTP error! status: ${response.status}`)
                 }
                 const data = await response.json()
+
+                if (!data || typeof data !== "object") {
+                    throw new Error("Invalid data received from server")
+                }
 
                 // Convert API response dates to Date objects
                 const convertConsultation = (consultation: ApiConsultation): Consultation => ({
@@ -35,20 +43,31 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                     endTime: new Date(consultation.endTime),
                 })
 
-                setUpcomingConsultations(data.upcoming.map(convertConsultation))
-                setPastConsultations(data.past.map(convertConsultation))
+                setUpcomingConsultations(Array.isArray(data.upcoming) ? data.upcoming.map(convertConsultation) : [])
+                setPastConsultations(Array.isArray(data.past) ? data.past.map(convertConsultation) : [])
+                setError(null)
             } catch (error) {
                 console.error("Error fetching consultations:", error)
+                setError("Failed to fetch consultations. Please try again later.")
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch consultations. Please try again later.",
+                    variant: "destructive",
+                })
             } finally {
                 setIsLoading(false)
             }
         }
 
         fetchConsultations()
-    }, [])
+    }, [session])
 
     if (isLoading) {
         return <div>Loading...</div>
+    }
+
+    if (error) {
+        return <div className="text-red-500">{error}</div>
     }
 
     const nextConsultation = upcomingConsultations[0]
