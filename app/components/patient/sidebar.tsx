@@ -8,11 +8,13 @@ import { type LucideIcon, MoreHorizontal } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { menuItems } from "../menuItems"
+import { useSession } from "next-auth/react"
 
 
 export function PatientSidebar() {
     const [open, setOpen] = useState(false)
     const pathname = usePathname()
+    const { data: session } = useSession()
 
     const visibleItems = menuItems.flatMap((section) => section.items.filter((item) => item.visible.includes("patient")))
 
@@ -42,7 +44,7 @@ export function PatientSidebar() {
             {/* Desktop Sidebar */}
             <aside className="hidden sticky top-0 md:flex flex-col w-64 h-screen bg-background border-r">
                 <div className="p-4">
-                    <Link href=" patient" className="flex items-center gap-2 mb-8" aria-label="ConsultantApp Home">
+                    <Link href={`/${session?.user.role}`} className="flex items-center gap-2 mb-8" aria-label="ConsultantApp Home">
                         <Image src="/logo.png" className="w-8 h-8" alt="" width={32} height={32} />
                         <span className="font-bold text-xl">ConsultApp</span>
                     </Link>

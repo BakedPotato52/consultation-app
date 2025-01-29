@@ -14,6 +14,10 @@ export function PatientDashboardWrapper() {
         return <div>Access Denied</div>
     }
 
+    if (!session) {
+        return <div>Access Denied</div>
+    }
+
     return <PatientDashboard session={session} />
 }
 
