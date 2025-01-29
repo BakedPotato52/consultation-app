@@ -1,57 +1,79 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from '@/components/ui/label'
-import { motion } from "framer-motion";
-import { toast } from 'sonner'
-import Link from 'next/link'
+import { useState, useEffect } from "react"
+import { signIn, useSession } from "next-auth/react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { motion } from "framer-motion"
+import { toast } from "sonner"
+import Link from "next/link"
+import type React from "react" // Added import for React
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const { data: session } = useSession()
-  const role = session?.user?.role
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push(`/${session.user.role}`)
+    }
+  }, [status, session, router])
+
+  useEffect(() => {
+    const callbackUrl = searchParams.get("callbackUrl")
+    if (callbackUrl && (callbackUrl.includes("_next/static") || callbackUrl.includes("favicon.ico"))) {
+      // Ignore redirects to static files or favicon
+      return
+    }
+    // Store the valid callbackUrl in sessionStorage
+    if (callbackUrl) {
+      sessionStorage.setItem("loginCallbackUrl", callbackUrl)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         email,
         password,
-        redirect: true,
+        redirect: false,
       })
 
       if (result?.error) {
         toast.error(result.error)
-        setError(result.error as string)
+        setError(result.error)
       } else {
-        router.push(`/${role}`)
-        toast.success('Logged in successfully')
+        const callbackUrl = sessionStorage.getItem("loginCallbackUrl") || `/${session?.user?.role || ""}`
+        sessionStorage.removeItem("loginCallbackUrl")
+        router.push(callbackUrl)
+        toast.success("Logged in successfully")
       }
     } catch (error) {
-      toast.error('An error occurred during login')
+      toast.error("An error occurred during login")
+      setError("An unexpected error occurred")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
+  }
+
+  if (status === "loading") {
+    return <div>Loading...</div>
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <Card className="w-full max-w-md overflow-hidden">
           <motion.div
             initial={{ x: "-100%" }}
@@ -61,9 +83,7 @@ export default function LoginPage() {
           />
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access your account
-            </CardDescription>
+            <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent>
             <motion.form
