@@ -44,8 +44,22 @@ export async function getConsultations(patientId: string | undefined): Promise<{
         orderBy: { startTime: "desc" },
     })
 
+    const formattedUpcomingConsultations = upcomingConsultations.map(consultation => ({
+        ...consultation,
+        psychiatrist: {
+            name: consultation.psychiatrist.name || ''
+        }
+    }));
+
+    const formattedPastConsultations = pastConsultations.map(consultation => ({
+        ...consultation,
+        psychiatrist: {
+            name: consultation.psychiatrist.name || ''
+        }
+    }));
+
     return {
-        upcoming: upcomingConsultations,
-        past: pastConsultations,
+        upcoming: formattedUpcomingConsultations,
+        past: formattedPastConsultations,
     }
 }

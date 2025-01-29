@@ -7,14 +7,16 @@ import Image from "next/image"
 import { type LucideIcon, MoreHorizontal } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { menuItems } from "../menuItems"
+import { MenuItems } from "./menuItems"
 import { useSession } from "next-auth/react"
 
 
-export function PatientSidebar() {
+export function Sidebar() {
     const [open, setOpen] = useState(false)
     const pathname = usePathname()
     const { data: session } = useSession()
+    const role = session?.user?.role?.toLowerCase()
+    const menuItems = MenuItems(role)
 
     const visibleItems = menuItems.flatMap((section) => section.items.filter((item) => item.visible.includes("patient")))
 
