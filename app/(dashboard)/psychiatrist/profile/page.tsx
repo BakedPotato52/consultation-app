@@ -3,19 +3,18 @@ import { Suspense } from "react"
 import { PsychiatristProfile } from "../../../components/psychiatrist/profile"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "Psychiatrist Profile",
     description: "View and edit your professional profile",
 }
 
 export default function PsychiatristProfilePage() {
     return (
-        <div className="container mx-auto py-10">
-            <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
-            <Suspense fallback={<ProfileSkeleton />}>
-                <PsychiatristProfile />
-            </Suspense>
-        </div>
+
+        <Suspense fallback={<ProfileSkeleton />}>
+            <PsychiatristProfile />
+        </Suspense>
+
     )
 }
 

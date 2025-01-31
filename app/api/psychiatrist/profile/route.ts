@@ -6,7 +6,6 @@ import { db } from "@/app/lib/db"
 export async function GET() {
     try {
         const session = await getServerSession(authOptions)
-        console.log("Session:", JSON.stringify(session, null, 2))
 
         if (!session) {
             console.error("No session found")
