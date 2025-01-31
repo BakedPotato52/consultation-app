@@ -15,10 +15,13 @@ export function Sidebar() {
     const [open, setOpen] = useState(false)
     const pathname = usePathname()
     const { data: session } = useSession()
-    const role = session?.user?.role?.toLowerCase()
+
+    const role = session?.user?.role?.toLowerCase() as "patient" | "psychiatrist"
     const menuItems = MenuItems(role)
 
-    const visibleItems = menuItems.flatMap((section) => section.items.filter((item) => item.visible.includes("patient")))
+    const visibleItems = menuItems.flatMap(section =>
+        section.items.filter(item => role && item.visible.includes(role))
+    )
 
     const renderMenuItem = (item: (typeof visibleItems)[0], index: number) => {
         const IconComponent = item.icon as LucideIcon

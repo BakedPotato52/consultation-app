@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { AuthGuard } from "@/components/auth-guard"
-import { PsychiatristDashboard } from "@/app/components/psychiatrists/dashboard"
+import { PsychiatristDashboard } from "@/app/components/psychiatrist/dashboard"
 
 export const metadata: Metadata = {
   title: "Patient Dashboard",
