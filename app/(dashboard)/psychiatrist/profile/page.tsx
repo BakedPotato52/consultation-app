@@ -1,12 +1,32 @@
 import type { Metadata } from "next"
-import { ProfileContent } from "../../../components/patient/profile-content"
+import { Suspense } from "react"
+import { PsychiatristProfile } from "../../../components/psychiatrist/profile"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export const metadata: Metadata = {
-    title: "Patient Profile",
-    description: "View and edit your profile information",
+export const metadata = {
+    title: "Psychiatrist Profile",
+    description: "View and edit your professional profile",
 }
 
-export default function ProfilePage() {
-    return <ProfileContent />
+export default function PsychiatristProfilePage() {
+    return (
+        <div className="container mx-auto py-10">
+            <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
+            <Suspense fallback={<ProfileSkeleton />}>
+                <PsychiatristProfile />
+            </Suspense>
+        </div>
+    )
+}
+
+function ProfileSkeleton() {
+    return (
+        <div className="space-y-4">
+            <Skeleton className="h-8 w-[200px]" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+        </div>
+    )
 }
 

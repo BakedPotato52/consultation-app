@@ -23,7 +23,7 @@ export function RoleRedirect() {
                 router.push("/patient")
                 break
             case "PSYCHIATRIST":
-                router.push("/psychiatrists")
+                router.push("/psychiatrist")
                 break
             default:
                 router.push("/login")
