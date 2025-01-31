@@ -19,6 +19,7 @@ export function ProfileContent() {
     const [profileData, setProfileData] = useState({
         name: session?.user?.name || "",
         email: session?.user?.email || "",
+        image: session?.user?.image || "",
         phone: "(555) 123-4567",
         address: "123 Main St, Anytown, AN 12345",
         dateOfBirth: "1990-01-01",
@@ -56,7 +57,7 @@ export function ProfileContent() {
                     <CardContent className="space-y-4">
                         <div className="flex items-center space-x-4">
                             <Avatar className="h-20 w-20">
-                                <AvatarImage src="/placeholder.svg?height=80&width=80" alt={profileData.name} />
+                                <AvatarImage src={session?.user?.image ?? undefined} alt={profileData.name} />
                                 <AvatarFallback>
                                     {profileData.name
                                         .split(" ")

@@ -50,7 +50,7 @@ export function Sidebar() {
             <aside className="hidden sticky top-0 md:flex flex-col w-64 h-screen bg-background border-r">
                 <div className="p-4">
                     <Link href={`/${session?.user.role}`} className="flex items-center gap-2 mb-8" aria-label="ConsultantApp Home">
-                        <Image src="/logo.png" className="w-8 h-8" alt="" width={32} height={32} />
+                        <Image src="/vercel.svg" className="w-8 h-8" alt="" width={32} height={32} />
                         <span className="font-bold text-xl">ConsultApp</span>
                     </Link>
                     <nav aria-label="Main Navigation">
@@ -59,7 +59,7 @@ export function Sidebar() {
                                 <h2 className="text-sm font-semibold text-muted-foreground mb-2 px-3">{section.title}</h2>
                                 <ul className="space-y-1">
                                     {section.items
-                                        .filter((item) => item.visible.includes("patient"))
+                                        .filter((item) => item.visible.includes(role))
                                         .map((item) => renderMenuItem(item, 0))}
                                 </ul>
                             </div>

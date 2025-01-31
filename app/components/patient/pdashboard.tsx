@@ -142,7 +142,7 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                     <CardContent>
                         <div className="flex items-center space-x-4">
                             <Avatar className="h-20 w-20">
-                                <AvatarImage src="/placeholder.svg?height=80&width=80" alt={session?.user?.name || ""} />
+                                <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name || ""} />
                                 <AvatarFallback>
                                     {session?.user?.name
                                         ?.split(" ")

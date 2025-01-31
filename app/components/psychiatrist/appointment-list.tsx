@@ -2,13 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 
-interface Appointment {
-    id: string
-    startTime: Date
-    endTime: Date
-    patientName: string
-    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
-}
+
 
 interface AppointmentListProps {
     appointments: Appointment[]
