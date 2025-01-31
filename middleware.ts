@@ -21,18 +21,12 @@ export async function middleware(request: NextRequest) {
     }
 
     // Check for authentication token
-    const token = await getToken({
-        req: request,
-        secret: process.env.NEXTAUTH_SECRET
-    })
+    // const token = await getToken({
+    //     req: request,
+    //     secret: process.env.NEXTAUTH_SECRET
+    // })
 
-    // Redirect to login if no token is found
-    if (!token) {
-        const loginUrl = new URL('/login', request.url)
-        // Add the current path as a redirect parameter
-        loginUrl.searchParams.set('callbackUrl', pathname)
-        return NextResponse.redirect(loginUrl)
-    }
+
 
     return NextResponse.next()
 }
