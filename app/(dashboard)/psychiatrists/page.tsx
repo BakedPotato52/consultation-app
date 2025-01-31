@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { AuthGuard } from "@/components/auth-guard"
+import { PsychiatristDashboard } from "@/app/components/psychiatrists/dashboard"
 
 export const metadata: Metadata = {
   title: "Patient Dashboard",
@@ -9,9 +10,7 @@ export const metadata: Metadata = {
 export default function PatientDashboardPage() {
   return (
     <AuthGuard>
-      <div>
-        Hello World
-      </div>
+      <PsychiatristDashboard />
     </AuthGuard>
   )
 }
