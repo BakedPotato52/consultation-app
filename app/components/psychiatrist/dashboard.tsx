@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import axios from "axios"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, Users, BarChart2 } from "lucide-react"
@@ -20,25 +21,19 @@ export function PsychiatristDashboard() {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const fetchAppointments = async () => {
-            // In a real application, this would be an API call
-            setUpcomingAppointments([
-                {
-                    id: "1",
-                    startTime: new Date(Date.now() + 1000 * 60 * 60), // 1 hour from now
-                    endTime: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours from now
-                    patientName: "John Doe",
-                    status: "SCHEDULED",
-                },
-                {
-                    id: "2",
-                    startTime: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
-                    endTime: new Date(Date.now() + 1000 * 60 * 60 * 25), // 1 day and 1 hour from now
-                    patientName: "Jane Smith",
-                    status: "SCHEDULED",
-                },
-            ])
-            setIsLoading(false)
+        const fetchAppointments = () => {
+            axios.get("/api/appointments").then((response: { data: Appointment[] }) => {
+                const appointments = response.data as Appointment[]
+                const now = new Date()
+
+                const upcomingAppointments = appointments.filter((appointment) => {
+                    return appointment.startTime >= now && appointment.startTime < new Date(now.getTime() + 24 * 60 * 60 * 1000)
+                })
+
+                setUpcomingAppointments(upcomingAppointments)
+            }).finally(() => {
+                setIsLoading(false)
+            })
         }
 
         fetchAppointments()
