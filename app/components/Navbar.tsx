@@ -29,7 +29,7 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="flex items-center justify-between p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className="flex max-sm:sticky top-0 items-center justify-between p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex-1 md:flex-initial">
                 <form className="hidden md:flex items-center space-x-2">
                     <div className="relative rounded-md">
