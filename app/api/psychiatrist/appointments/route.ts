@@ -17,10 +17,7 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized - Invalid session structure" }, { status: 401 })
         }
 
-        if (session.user.role !== "PSYCHIATRIST") {
-            console.error(`Unauthorized role: ${session.user.role}`)
-            return NextResponse.json({ error: "Unauthorized - Invalid role" }, { status: 401 })
-        }
+
 
         if (!session.user.id) {
             console.error("No user ID in session")
@@ -29,26 +26,23 @@ export async function GET() {
 
         const psychiatrist = await db.user.findUnique({
             where: { id: session.user.id },
-            from: {
-                appointments: {
+            select: {
+                psychiatristConsultations: {
                     select: {
                         id: true,
                         startTime: true,
                         endTime: true,
+                        status: true,
+                        cost: true,
                         patient: {
                             select: {
                                 name: true,
                             },
                         },
-                        status: true,
-                    },
-                    orderBy: {
-                        startTime: "asc",
                     },
                 },
-            }
+            },
         })
-
         if (!psychiatrist) {
             console.error(`Psychiatrist not found for ID: ${session.user.id}`)
             return NextResponse.json({ error: "Psychiatrist not found" }, { status: 404 })

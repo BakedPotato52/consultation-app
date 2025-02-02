@@ -1,19 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, Users, BarChart2 } from "lucide-react"
 import { AppointmentList } from "./appointment-list"
+import { toast } from "sonner"
+import DashboardSkeleton from "./dashboard-skeleton"
 
-interface Appointment {
-    id: string
-    startTime: Date
-    endTime: Date
-    patientName: string
-    status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
-}
 
 export function PsychiatristDashboard() {
     const { data: session } = useSession()
@@ -21,26 +15,28 @@ export function PsychiatristDashboard() {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const fetchAppointments = () => {
-            axios.get("/api/appointments").then((response: { data: Appointment[] }) => {
-                const appointments = response.data as Appointment[]
-                const now = new Date()
-
-                const upcomingAppointments = appointments.filter((appointment) => {
-                    return appointment.startTime >= now && appointment.startTime < new Date(now.getTime() + 24 * 60 * 60 * 1000)
-                })
-
-                setUpcomingAppointments(upcomingAppointments)
-            }).finally(() => {
+        const fetchAppointments = async () => {
+            try {
+                const response = await fetch("/api/psychiatrist/appointments")
+                if (!response.ok) {
+                    throw new Error("Failed to fetch appointment data")
+                }
+                const data = await response.json()
+                setUpcomingAppointments(Array.isArray(data) ? data : [])
+            } catch (error) {
+                console.error("Error fetching appointment data:", error)
+                toast.error("Failed to load Appointments")
+            } finally {
                 setIsLoading(false)
-            })
+            }
         }
+
 
         fetchAppointments()
     }, [])
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <DashboardSkeleton />
     }
 
     return (
