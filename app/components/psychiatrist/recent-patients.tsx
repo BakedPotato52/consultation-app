@@ -1,50 +1,53 @@
+'use client'
+import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner"
 
-const recentPatients = [
-    {
-        name: "Olivia Johnson",
-        email: "olivia.johnson@example.com",
-        avatar: "/avatars/01.png",
-    },
-    {
-        name: "William Chen",
-        email: "william.chen@example.com",
-        avatar: "/avatars/02.png",
-    },
-    {
-        name: "Sophia Patel",
-        email: "sophia.patel@example.com",
-        avatar: "/avatars/03.png",
-    },
-    {
-        name: "Liam Rodriguez",
-        email: "liam.rodriguez@example.com",
-        avatar: "/avatars/04.png",
-    },
-    {
-        name: "Emma Davis",
-        email: "emma.davis@example.com",
-        avatar: "/avatars/05.png",
-    },
-]
 
 export function RecentPatients() {
+    const [recentPatients, setRecentPatients] = useState<Appointment[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchPatients = async () => {
+            try {
+                const response = await fetch("/api/psychiatrist/appointments")
+                if (!response.ok) {
+                    throw new Error("Failed to fetch patient data")
+                }
+                const data = await response.json()
+                console.log(data)
+                setRecentPatients(data.psychiatristConsultations)
+            } catch (error) {
+                console.error("Error fetching patient data:", error)
+                toast.error("Failed to load patients")
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchPatients()
+    }, [])
+
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
     return (
         <div className="space-y-8">
-            {recentPatients.map((patient) => (
-                <div key={patient.email} className="flex items-center">
+            {recentPatients.map((patients) => (
+                <div key={patients.patient.id} className="flex items-center">
                     <Avatar className="h-9 w-9">
-                        <AvatarImage src={patient.avatar} alt={patient.name} />
+                        <AvatarImage src={patients.patient.image} alt={patients.patient.name} />
                         <AvatarFallback>
-                            {patient.name
+                            {patients.patient.name
                                 .split(" ")
                                 .map((n) => n[0])
                                 .join("")}
                         </AvatarFallback>
                     </Avatar>
                     <div className="ml-4 space-y-1">
-                        <p className="text-sm font-medium leading-none">{patient.name}</p>
-                        <p className="text-sm text-muted-foreground">{patient.email}</p>
+                        <p className="text-sm font-medium leading-none">{patients.patient.name}</p>
+                        <p className="text-sm text-muted-foreground">{patients.patient.email}</p>
                     </div>
                 </div>
             ))}

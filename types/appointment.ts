@@ -8,5 +8,9 @@ interface Appointment {
 }
 
 interface Patient {
+    id: string;
     name: string;
+    email: string;
+    image: string;
+
 }

@@ -35,6 +35,12 @@ export function PsychiatristDashboard() {
         fetchAppointments()
     }, [])
 
+    const newAppointments = upcomingAppointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.startTime);
+        const currentDate = new Date();
+        return appointmentDate.getMonth() === currentDate.getMonth() && appointmentDate.getFullYear() === currentDate.getFullYear();
+    }).length;
+
     if (isLoading) {
         return (<DashboardSkeleton />)
     }
@@ -50,8 +56,9 @@ export function PsychiatristDashboard() {
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">250</div>
-                        <p className="text-xs text-muted-foreground">+5 new this month</p>
+                        <div className="text-2xl font-bold">{upcomingAppointments.length}</div>
+                        <p className="text-xs text-muted-foreground">+{newAppointments} new this month</p>
+
                     </CardContent>
                 </Card>
                 <Card>
@@ -70,7 +77,7 @@ export function PsychiatristDashboard() {
                         <BarChart2 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">89</div>
+                        <div className="text-2xl font-bold">{upcomingAppointments.length}</div>
                         <p className="text-xs text-muted-foreground">12% increase from last month</p>
                     </CardContent>
                 </Card>
