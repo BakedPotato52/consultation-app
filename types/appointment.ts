@@ -3,6 +3,10 @@ interface Appointment {
     startTime: Date
     endTime: Date
     cost: number
-    patientName: string
+    patient: Patient
     status: "SCHEDULED" | "COMPLETED" | "CANCELLED"
+}
+
+interface Patient {
+    name: string;
 }

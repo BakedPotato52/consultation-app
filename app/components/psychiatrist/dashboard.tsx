@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CalendarDays, Users, BarChart2 } from "lucide-react"
 import { AppointmentList } from "./appointment-list"
 import { toast } from "sonner"
-import DashboardSkeleton from "./dashboard-skeleton"
+import { DashboardSkeleton } from "./dashboard-skeleton"
 
 
 export function PsychiatristDashboard() {
@@ -22,7 +22,8 @@ export function PsychiatristDashboard() {
                     throw new Error("Failed to fetch appointment data")
                 }
                 const data = await response.json()
-                setUpcomingAppointments(Array.isArray(data) ? data : [])
+                console.log(data)
+                setUpcomingAppointments(data.psychiatristConsultations)
             } catch (error) {
                 console.error("Error fetching appointment data:", error)
                 toast.error("Failed to load Appointments")
@@ -31,12 +32,11 @@ export function PsychiatristDashboard() {
             }
         }
 
-
         fetchAppointments()
     }, [])
 
     if (isLoading) {
-        return <DashboardSkeleton />
+        return (<DashboardSkeleton />)
     }
 
     return (
@@ -61,7 +61,7 @@ export function PsychiatristDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{upcomingAppointments.length}</div>
-                        <p className="text-xs text-muted-foreground">Next: {upcomingAppointments[0]?.patientName}</p>
+                        <p className="text-xs text-muted-foreground">Next: {upcomingAppointments[0]?.patient.name}</p>
                     </CardContent>
                 </Card>
                 <Card>

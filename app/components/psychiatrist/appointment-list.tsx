@@ -2,12 +2,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 
+
 interface AppointmentListProps {
     appointments: Appointment[]
 }
 
 export function AppointmentList({ appointments }: AppointmentListProps) {
-
 
     return (
         <Table>
@@ -22,7 +22,7 @@ export function AppointmentList({ appointments }: AppointmentListProps) {
             <TableBody>
                 {appointments.map((appointment) => (
                     <TableRow key={appointment.id}>
-                        <TableCell>{appointment.patientName}</TableCell>
+                        <TableCell>{appointment.patient.name}</TableCell>
                         <TableCell>{format(new Date(appointment.startTime), "PP")}</TableCell>
                         <TableCell>
                             {format(new Date(appointment.startTime), "p")} - {format(new Date(appointment.endTime), "p")}
