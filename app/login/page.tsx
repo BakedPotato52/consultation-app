@@ -1,20 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { signIn, useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { motion } from "framer-motion"
 import { toast } from "sonner"
 import Link from "next/link"
-import type React from "react" // Added import for React
+import dynamic from "next/dynamic"
 
-export default function LoginPage() {
+const MotionDiv = dynamic(() => import("framer-motion").then((mod) => mod.motion.div), { ssr: false })
+const MotionForm = dynamic(() => import("framer-motion").then((mod) => mod.motion.form), { ssr: false })
+
+const LoginPage: React.FC = React.memo(() => {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const searchParams = useSearchParams()
@@ -29,43 +30,64 @@ export default function LoginPage() {
 
   useEffect(() => {
     const callbackUrl = searchParams.get("callbackUrl")
-    if (callbackUrl && (callbackUrl.includes("_next/static") || callbackUrl.includes("favicon.ico"))) {
-      // Ignore redirects to static files or favicon
-      return
-    }
-    // Store the valid callbackUrl in sessionStorage
-    if (callbackUrl) {
+    if (callbackUrl && !callbackUrl.includes("_next/static") && !callbackUrl.includes("favicon.ico")) {
       sessionStorage.setItem("loginCallbackUrl", callbackUrl)
     }
   }, [searchParams])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setIsLoading(true)
+      try {
+        const result = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        })
 
-      if (result?.error) {
-        toast.error(result.error)
-        setError(result.error)
-      } else {
-        const callbackUrl = sessionStorage.getItem("loginCallbackUrl") || `/${session?.user?.role || ""}`
-        sessionStorage.removeItem("loginCallbackUrl")
-        router.push(callbackUrl)
-        toast.success("Logged in successfully")
+        if (result?.error) {
+          toast.error(result.error)
+        } else {
+          const callbackUrl = sessionStorage.getItem("loginCallbackUrl") || `/${session?.user?.role || ""}`
+          sessionStorage.removeItem("loginCallbackUrl")
+          router.push(callbackUrl)
+          toast.success("Logged in successfully")
+        }
+      } catch (error) {
+        toast.error("An error occurred during login")
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      toast.error("An error occurred during login")
-      setError("An unexpected error occurred")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+    [email, password, router, session],
+  )
+
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+  }, [])
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+  }, [])
+
+  const cardAnimation = useMemo(
+    () => ({
+      initial: { opacity: 0, y: -20 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.5 },
+    }),
+    [],
+  )
+
+  const formAnimation = useMemo(
+    () => ({
+      initial: { opacity: 0, y: 20 },
+      animate: { opacity: 1, y: 0 },
+      transition: { delay: 0.1 },
+    }),
+    [],
+  )
 
   if (status === "loading") {
     return <div>Loading...</div>
@@ -73,9 +95,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <MotionDiv {...cardAnimation}>
         <Card className="w-full max-w-md overflow-hidden">
-          <motion.div
+          <MotionDiv
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             transition={{ type: "spring", stiffness: 100 }}
@@ -86,22 +108,7 @@ export default function LoginPage() {
             <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <motion.form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-3 text-sm text-red-600 bg-red-100 border border-red-600 rounded"
-                >
-                  {error}
-                </motion.div>
-              )}
+            <MotionForm onSubmit={handleSubmit} className="space-y-4" {...formAnimation}>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -113,7 +120,7 @@ export default function LoginPage() {
                   autoCorrect="off"
                   disabled={isLoading}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   required
                 />
               </div>
@@ -127,7 +134,7 @@ export default function LoginPage() {
                   autoCapitalize="none"
                   autoCorrect="off"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   disabled={isLoading}
                   required
                 />
@@ -135,7 +142,7 @@ export default function LoginPage() {
               <Button className="w-full" type="submit" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
-            </motion.form>
+            </MotionForm>
             <div className="mt-4 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
@@ -154,8 +161,12 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </MotionDiv>
     </div>
   )
-}
+})
+
+LoginPage.displayName = "LoginPage"
+
+export default LoginPage
 

@@ -88,7 +88,7 @@ export function PsychiatristProfile() {
     }
 
     if (!profileData) {
-        return <div>Error: Unable to load profile data</div>
+        return <div className="text-red-700">Error: Unable to load profile data</div>
     }
 
     return (
@@ -127,7 +127,7 @@ export function PsychiatristProfile() {
                                     />
                                 </div>
                                 <div>
-                                    <Label htmlFor="email">Email</Label>
+                                    <Label htmlFor="email">Gmail</Label>
                                     <Input
                                         id="email"
                                         name="email"

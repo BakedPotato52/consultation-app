@@ -17,7 +17,7 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized - Invalid session structure" }, { status: 401 })
         }
 
-        if (session.user.role !== "PSYCHIATRIST") {
+        if (session.user.role !== "psychiatrist") {
             console.error(`Unauthorized role: ${session.user.role}`)
             return NextResponse.json({ error: "Unauthorized - Invalid role" }, { status: 401 })
         }
@@ -65,7 +65,7 @@ export async function PUT(req: Request) {
         const session = await getServerSession(authOptions)
         console.log("Session:", JSON.stringify(session, null, 2))
 
-        if (!session || !session.user || session.user.role !== "PSYCHIATRIST") {
+        if (!session || !session.user || session.user.role !== "psychiatrist") {
             console.error("Unauthorized access attempt:", JSON.stringify(session, null, 2))
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
