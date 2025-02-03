@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 
 export function RecentPatients() {
@@ -30,7 +31,11 @@ export function RecentPatients() {
     }, [])
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader2 className="animate-spin h-16 w-16 text-gray-900" />
+            </div>
+        )
     }
     return (
         <div className="space-y-8">

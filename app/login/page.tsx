@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import { Loader2 } from "lucide-react"
 
 const MotionDiv = dynamic(() => import("framer-motion").then((mod) => mod.motion.div), { ssr: false })
 const MotionForm = dynamic(() => import("framer-motion").then((mod) => mod.motion.form), { ssr: false })
@@ -90,7 +91,11 @@ const LoginPage: React.FC = React.memo(() => {
   )
 
   if (status === "loading") {
-    return <div>Loading...</div>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin h-16 w-16 text-gray-900" />
+      </div>
+    )
   }
 
   return (

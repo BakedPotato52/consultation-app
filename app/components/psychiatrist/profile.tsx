@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
-import { FileText, Shield } from "lucide-react"
+import { FileText, Loader2, Shield } from "lucide-react"
 
 interface PsychiatristData {
     id: string
@@ -84,7 +84,11 @@ export function PsychiatristProfile() {
     }
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader2 className="animate-spin h-16 w-16 text-gray-900" />
+            </div>
+        )
     }
 
     if (!profileData) {
