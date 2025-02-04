@@ -22,7 +22,6 @@ export function PsychiatristDashboard() {
                     throw new Error("Failed to fetch appointment data")
                 }
                 const data = await response.json()
-                console.log(data)
                 setUpcomingAppointments(data.psychiatristConsultations)
             } catch (error) {
                 console.error("Error fetching appointment data:", error)

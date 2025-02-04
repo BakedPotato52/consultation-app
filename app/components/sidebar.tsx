@@ -69,7 +69,7 @@ export function Sidebar() {
             </aside>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="lg:hidden fixed bottom-0 left-0 right-0 dark:bg-current bg-white border-t border-gray-200 z-50" aria-label="Mobile Navigation">
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 dark:bg-current  border-t border-gray-200 z-50" aria-label="Mobile Navigation">
                 <ul className="flex justify-around items-center h-16">
                     {visibleItems.slice(0, 3).map((item, index) => renderMenuItem(item, index))}
                     <li key="more-options">

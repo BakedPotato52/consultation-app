@@ -17,7 +17,7 @@ export function RecentPatients() {
                     throw new Error("Failed to fetch patient data")
                 }
                 const data = await response.json()
-                console.log(data)
+
                 setRecentPatients(data.psychiatristConsultations)
             } catch (error) {
                 console.error("Error fetching patient data:", error)
