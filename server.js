@@ -4,7 +4,7 @@ import next from "next"
 import { Server } from "socket.io"
 
 const dev = process.env.NODE_ENV !== "production"
-const hostname = "localhost"
+const hostname = "172.18.144.1"
 const port = 4000
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
