@@ -41,9 +41,7 @@ function ErrorBoundary({ children }: ErrorBoundaryProps) {
     return (
         <React.Fragment>
             {React.Children.map(children, (child) =>
-                React.isValidElement(child) && React.cloneElement(child, {
-                    onError: () => setHasError(true),
-                }),
+                React.isValidElement(child) ? child : null
             )}
         </React.Fragment>
     )

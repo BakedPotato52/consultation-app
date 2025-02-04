@@ -1,14 +1,41 @@
+'use client'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
+import { DashboardSkeleton } from "./dashboard-skeleton"
+import { useState, useEffect } from "react"
+import { toast } from "sonner"
 
 
-interface AppointmentListProps {
-    appointments: Appointment[]
-}
+export function AppointmentList() {
 
-export function AppointmentList({ appointments }: AppointmentListProps) {
+    const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const response = await fetch("/api/psychiatrist/appointments")
+                if (!response.ok) {
+                    throw new Error("Failed to fetch appointment data")
+                }
+                const data = await response.json()
+                console.log(data)
+                setUpcomingAppointments(data.psychiatristConsultations)
+            } catch (error) {
+                console.error("Error fetching appointment data:", error)
+                toast.error("Failed to load Appointments")
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchAppointments()
+    }, [])
+
+    if (isLoading) {
+        return (<DashboardSkeleton />)
+    }
     return (
         <Table>
             <TableHeader>
@@ -20,7 +47,7 @@ export function AppointmentList({ appointments }: AppointmentListProps) {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {appointments.map((appointment) => (
+                {upcomingAppointments.map((appointment) => (
                     <TableRow key={appointment.id}>
                         <TableCell>{appointment.patient.name}</TableCell>
                         <TableCell>{format(new Date(appointment.startTime), "PP")}</TableCell>

@@ -89,7 +89,7 @@ export function PsychiatristDashboard() {
                     <CardDescription>Your scheduled appointments for today and tomorrow</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <AppointmentList appointments={upcomingAppointments} />
+                    <AppointmentList />
                 </CardContent>
             </Card>
         </div>
