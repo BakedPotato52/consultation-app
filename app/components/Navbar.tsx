@@ -24,8 +24,8 @@ export default function Navbar() {
     }
 
     const handleLogout = async () => {
-        await signOut({ redirect: false })
-        router.push("/login") // Redirect to login page after logout
+        await signOut({ redirect: true, callbackUrl: "/register" })
+        router.push("/register") // Redirect to login page after logout
     }
 
     return (

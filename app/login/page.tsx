@@ -24,8 +24,14 @@ const LoginPage: React.FC = React.memo(() => {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.push(`/${session.user.role}`)
+    if (status === "authenticated" && session?.user?.role) {
+      const callbackUrl = sessionStorage.getItem("loginCallbackUrl")
+      if (callbackUrl) {
+        sessionStorage.removeItem("loginCallbackUrl")
+        router.push(callbackUrl)
+      } else {
+        router.push(`/${session.user.role}`)
+      }
     }
   }, [status, session, router])
 
@@ -50,10 +56,8 @@ const LoginPage: React.FC = React.memo(() => {
         if (result?.error) {
           toast.error(result.error)
         } else {
-          const callbackUrl = sessionStorage.getItem("loginCallbackUrl") || `/${session?.user?.role || ""}`
-          sessionStorage.removeItem("loginCallbackUrl")
-          router.push(callbackUrl)
           toast.success("Logged in successfully")
+          // The redirection will be handled by the first useEffect
         }
       } catch (error) {
         toast.error("An error occurred during login")
@@ -61,7 +65,7 @@ const LoginPage: React.FC = React.memo(() => {
         setIsLoading(false)
       }
     },
-    [email, password, router, session],
+    [email, password],
   )
 
   const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
