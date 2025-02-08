@@ -155,7 +155,7 @@ const LoginPage: React.FC = React.memo(() => {
             <div className="mt-4 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/signup" className="underline underline-offset-4 hover:text-primary">
+                <Link href="/register" className="underline underline-offset-4 hover:text-primary">
                   Sign up
                 </Link>
               </p>

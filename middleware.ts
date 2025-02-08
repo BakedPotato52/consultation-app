@@ -17,9 +17,9 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request })
     const isAuthenticated = !!token
 
-    if (!isAuthenticated) {
-        return NextResponse.redirect(new URL("/login", request.url))
-    }
+    // if (!isAuthenticated) {
+    //     return NextResponse.redirect(new URL("/login", request.url))
+    // }
 
     // Skip middleware for public routes and API routes
     if (publicRoutes.includes(pathname) || apiRoutes.some(route => pathname.startsWith(route))) {
