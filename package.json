@@ -26,6 +26,7 @@
     "@radix-ui/react-switch": "^1.1.2",
     "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.5",
+    "@zegocloud/zego-uikit-prebuilt": "^2.14.1",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -40,12 +41,14 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
+    "react-use": "^17.6.0",
     "recharts": "^2.15.1",
     "socket.io": "^4.7.1",
     "socket.io-client": "^4.7.1",
     "sonner": "^1.7.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "zego-express-engine-webrtc": "^3.7.4",
     "zod": "^3.24.1"
   },
   "devDependencies": {

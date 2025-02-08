@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ThemeProvider>
-        <body className={`${inter.className} max-sm:mb-16`}>
+        <body className={`${inter.className} max-sm:mb-16 sm:max-w-screen`}>
           <NextAuthProvider>{children}</NextAuthProvider>
           <Toaster position="top-center" />
         </body>

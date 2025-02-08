@@ -10,7 +10,8 @@ import { format } from "date-fns"
 import type { Session } from "next-auth"
 import type { Consultation, ApiConsultation } from "@/types/consultations"
 import { toast } from "@/components/ui/use-toast"
-import { Skeleton } from "@/components/ui/skeleton"
+import DasboardSk from "./dasboardsk"
+import Link from "next/link"
 
 interface PatientDashboardProps {
     session: Session
@@ -64,64 +65,7 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
     }, [session])
 
     if (isLoading) {
-        return (
-            <div className="container mx-auto p-6">
-                <Skeleton className="h-10 w-1/3 mb-6" />
-
-                <div className="grid gap-6 md:grid-cols-2">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle><Skeleton className="h-6 w-1/2" /></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center space-x-4">
-                                <Skeleton className="h-20 w-20 rounded-full" />
-                                <div>
-                                    <Skeleton className="h-6 w-32 mb-2" />
-                                    <Skeleton className="h-4 w-48" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle><Skeleton className="h-6 w-2/3" /></CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Skeleton className="h-6 w-1/3 mb-2" />
-                            <Skeleton className="h-4 w-40 mb-4" />
-                            <Skeleton className="h-4 w-56 mb-4" />
-                            <Skeleton className="h-10 w-40" />
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="mt-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle><Skeleton className="h-6 w-1/3" /></CardTitle>
-                            <Skeleton className="h-4 w-40" />
-                        </CardHeader>
-                        <CardContent>
-                            <Skeleton className="h-16 w-full" />
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="mt-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle><Skeleton className="h-6 w-1/3" /></CardTitle>
-                            <Skeleton className="h-4 w-40" />
-                        </CardHeader>
-                        <CardContent>
-                            <Skeleton className="h-16 w-full" />
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        )
+        return <DasboardSk />
     }
 
     if (error) {
@@ -170,10 +114,10 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                                 {format(nextConsultation.startTime, "p")} - {format(nextConsultation.endTime, "p")}
                             </p>
                             <p className="mb-4">With Dr. {nextConsultation.psychiatrist.name}</p>
-                            <Button>
+                            <Link href='/consultation/[id]'>
                                 <CalendarDays className="mr-2 h-4 w-4" />
                                 Join Consultation
-                            </Button>
+                            </Link>
                         </CardContent>
                     </Card>
                 )}
