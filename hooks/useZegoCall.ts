@@ -37,6 +37,8 @@ const useZegoCloudVideoCall = ({
         // Generate a test kit token.
         // If TypeScript complains about missing types, cast ZegoUIKitPrebuilt to any.
         const kitToken = (ZegoUIKitPrebuilt as any).generateKitTokenForTest(
+            appID,
+            serverSecret,
             roomID,
             userID,
             userName
