@@ -78,22 +78,13 @@ export function ConsultationContent({ consultationId }: { consultationId: string
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>
-                        Consultation with{" "}
-                        {session.user.role === "PATIENT" ? consultation.psychiatrist.name : consultation.patient.name}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                </CardContent>
-                <div ref={videoContainerRef} className="w-full h-svh" />
-                {session.user.role === "PSYCHIATRIST" && (
-                    <div className="mt-4">
-                        <Button onClick={() => router.push(`/notes/${consultationId}`)}>Add Consultation Notes</Button>
-                    </div>
-                )}
-            </Card>
+
+            <div ref={videoContainerRef} className="w-full h-svh" />
+            {session.user.role === "PSYCHIATRIST" && (
+                <div className="mt-4">
+                    <Button onClick={() => router.push(`/notes/${consultationId}`)}>Add Consultation Notes</Button>
+                </div>
+            )}
         </div>
     )
 }
