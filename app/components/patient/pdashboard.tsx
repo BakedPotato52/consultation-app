@@ -113,10 +113,12 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                                 {format(nextConsultation.startTime, "p")} - {format(nextConsultation.endTime, "p")}
                             </p>
                             <p className="mb-4">With Dr. {nextConsultation.psychiatrist.name}</p>
-                            <Link href={`/consultation/${nextConsultation.id}`} passHref className="flex flex-row bg-linear-to-t from-sky-500 to-indigo-500 text-white px-4 py-2 rounded-md ease-in-out transition duration-150 hover:from-sky-600 hover:to-indigo-600">
-                                <CalendarDays className="mr-2 h-4 w-4" />
-                                Join Consultation
-                            </Link>
+                            <div className="bg-primary rounded-md p-2 hover:zoom-in-50 text-white ease-in-out">
+                                <Link href={`/consultation/${nextConsultation.id}`} passHref className="flex flex-row  ">
+                                    <CalendarDays className="mr-2 h-4 w-4" />
+                                    Join Consultation
+                                </Link>
+                            </div>
                         </CardContent>
                     </Card>
                 )}
