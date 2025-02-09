@@ -2,10 +2,11 @@ import { Suspense } from "react"
 import { ConsultationContent } from "./consultation-content"
 import { Loader2 } from "lucide-react"
 
-export default function ConsultationPage({ params }: { params: { id: string } }) {
+export default async function ConsultationPage({ params }: { params: { id: string } }) {
+    const id = await params.id
     return (
         <Suspense fallback={<LoadingUI />}>
-            <ConsultationContent consultationId={params.id} />
+            <ConsultationContent consultationId={id} />
         </Suspense>
     )
 }

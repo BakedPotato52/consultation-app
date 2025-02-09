@@ -86,13 +86,13 @@ export function ConsultationContent({ consultationId }: { consultationId: string
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div ref={videoContainerRef} className="w-full h-[600px]" />
-                    {session.user.role === "PSYCHIATRIST" && (
-                        <div className="mt-4">
-                            <Button onClick={() => router.push(`/notes/${consultationId}`)}>Add Consultation Notes</Button>
-                        </div>
-                    )}
                 </CardContent>
+                <div ref={videoContainerRef} className="w-full h-svh" />
+                {session.user.role === "PSYCHIATRIST" && (
+                    <div className="mt-4">
+                        <Button onClick={() => router.push(`/notes/${consultationId}`)}>Add Consultation Notes</Button>
+                    </div>
+                )}
             </Card>
         </div>
     )

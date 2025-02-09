@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { id } = params
+    const { id } = await params
 
     try {
         const consultation = await db.consultation.findUnique({
