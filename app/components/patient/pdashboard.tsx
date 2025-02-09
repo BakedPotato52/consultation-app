@@ -113,7 +113,7 @@ export function PatientDashboard({ session }: PatientDashboardProps) {
                                 {format(nextConsultation.startTime, "p")} - {format(nextConsultation.endTime, "p")}
                             </p>
                             <p className="mb-4">With Dr. {nextConsultation.psychiatrist.name}</p>
-                            <Link href='/consultation/[id]'>
+                            <Link href={`/consultation/${nextConsultation.id}`} passHref>
                                 <CalendarDays className="mr-2 h-4 w-4" />
                                 Join Consultation
                             </Link>
