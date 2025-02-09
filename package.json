@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "serve": "ts-node --project tsconfig.json server.js",
-    "build": "npx prisma generate --schema=Prisma/schema.prisma && next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "studio": "npx prisma studio --schema=Prisma/schema.prisma"
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
