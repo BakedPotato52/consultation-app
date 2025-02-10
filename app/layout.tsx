@@ -2,10 +2,15 @@ import { Inter } from "next/font/google"
 import { NextAuthProvider } from "./components/providers/session-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner"
-import "@/styles/globals.css"
+import "./globals.css"
+import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
+export const metadata = {
+  title: "Consultation Platform",
+  description: "A platform for online consultations",
+}
 export default function RootLayout({
   children,
 }: {

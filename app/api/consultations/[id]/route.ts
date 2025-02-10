@@ -3,18 +3,17 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../../../lib/auth"
 import { db } from "../../../lib/db"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession(authOptions)
+    const { id } = await params
 
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { id } = await params
-
     try {
         const consultation = await db.consultation.findUnique({
-            where: { id: id as string },
+            where: { id },
             include: {
                 patient: { select: { id: true, name: true } },
                 psychiatrist: { select: { id: true, name: true } },
