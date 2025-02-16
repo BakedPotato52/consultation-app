@@ -1,28 +1,31 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 interface Psychiatrist {
     id: string
     name: string
-    rate: number
+    cost: number
 }
 
 const mockPsychiatrists: Psychiatrist[] = [
-    { id: "1", name: "Dr. Smith", rate: 100 },
-    { id: "2", name: "Dr. Johnson", rate: 120 },
-    { id: "3", name: "Dr. Williams", rate: 110 },
+    { id: "1", name: "Dr. Smith", cost: 100 },
+    { id: "2", name: "Dr. Johnson", cost: 120 },
+    { id: "3", name: "Dr. Williams", cost: 110 },
 ]
 
 export default function Consultations() {
@@ -56,18 +59,32 @@ export default function Consultations() {
     }
 
     if (!session) {
-        return <div>Please sign in to schedule a consultation.</div>
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Card className="w-full max-w-md">
+                    <CardHeader>
+                        <CardTitle>Authentication Required</CardTitle>
+                        <CardDescription>Please sign in to schedule a consultation.</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                        <Button className="w-full" onClick={() => router.push("/login")}>
+                            Sign In
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+        )
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 md:p-8">
             <Card className="max-w-2xl mx-auto">
                 <CardHeader>
-                    <CardTitle>Schedule a Consultation</CardTitle>
+                    <CardTitle className="text-2xl font-bold">Schedule a Consultation</CardTitle>
                     <CardDescription>Choose a psychiatrist and select a time for your consultation.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="psychiatrist">Select a Psychiatrist</Label>
                             <Select
@@ -81,7 +98,7 @@ export default function Consultations() {
                                 <SelectContent>
                                     {mockPsychiatrists.map((psychiatrist) => (
                                         <SelectItem key={psychiatrist.id} value={psychiatrist.id}>
-                                            {psychiatrist.name} - ${psychiatrist.rate}/hour
+                                            {psychiatrist.name} - ${psychiatrist.cost}/hour
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -90,12 +107,23 @@ export default function Consultations() {
 
                         <div className="space-y-2">
                             <Label>Select a Date</Label>
-                            <Calendar
-                                mode="single"
-                                selected={selectedDate}
-                                onSelect={setSelectedDate}
-                                className="rounded-md border"
-                            />
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !selectedDate && "text-muted-foreground",
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} initialFocus />
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
                         <div className="space-y-2">
@@ -145,7 +173,7 @@ export default function Consultations() {
                 </CardContent>
                 <CardFooter>
                     <Button type="submit" className="w-full" onClick={handleSubmit}>
-                        Schedule and Pay ${selectedPsychiatrist?.rate || 0}
+                        Schedule and Pay ${selectedPsychiatrist?.cost || 0}
                     </Button>
                 </CardFooter>
             </Card>
