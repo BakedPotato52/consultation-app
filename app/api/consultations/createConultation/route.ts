@@ -76,9 +76,9 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json()
-        const { name, cost, date, time, patientId } = body
+        const { name, cost, date, time, endTime, patientId } = body
 
-        if (!name || !cost || !date || !time || !patientId) {
+        if (!name || !cost || !date || !time || !endTime || !patientId) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
         }
 
@@ -87,8 +87,9 @@ export async function POST(req: Request) {
                 psychiatristId: session.user.id,
                 patientId,
                 cost,
-                scheduledDate: date,
-                scheduledTime: time,
+                createdAt: date,
+                startTime: time,
+                endTime: endTime,
                 status: "SCHEDULED",
             },
         })
