@@ -17,6 +17,7 @@ model User {
   role                      String         @default("patient")
   bio                       String?
   phoneNumber               String?
+  cost                      Float?
   emailNotifications        Boolean        @default(false)
   smsNotifications          Boolean        @default(false)
   createdAt                 DateTime       @default(now())

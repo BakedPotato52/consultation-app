@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { format } from "date-fns"
@@ -22,12 +22,6 @@ interface Psychiatrist {
     cost: number
 }
 
-const mockPsychiatrists: Psychiatrist[] = [
-    { id: "1", name: "Dr. Smith", cost: 100 },
-    { id: "2", name: "Dr. Johnson", cost: 120 },
-    { id: "3", name: "Dr. Williams", cost: 110 },
-]
-
 export default function Consultations() {
     const [selectedPsychiatrist, setSelectedPsychiatrist] = useState<Psychiatrist | null>(null)
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
@@ -35,9 +29,27 @@ export default function Consultations() {
     const [cardNumber, setCardNumber] = useState("")
     const [expiryDate, setExpiryDate] = useState("")
     const [cvv, setCvv] = useState("")
+    const [psychiatrists, setPsychiatrists] = useState<Psychiatrist[]>([])
 
     const router = useRouter()
     const { data: session } = useSession()
+
+    useEffect(() => {
+        const fetchPsychiatrists = async () => {
+            try {
+                const response = await fetch("/api/psychiatrist/profile")
+                if (!response.ok) {
+                    throw new Error("Failed to fetch psychiatrists data")
+                }
+                const data = await response.json()
+                setPsychiatrists(data)
+            } catch (error) {
+                toast.error("Failed to load psychiatrists. Please try again.")
+            }
+        }
+
+        fetchPsychiatrists()
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -47,12 +59,10 @@ export default function Consultations() {
         }
 
         try {
-            // Here you would typically make an API call to create the consultation
-            // and process the payment. For this example, we'll simulate a successful creation.
-            await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulating API call
-
+            // Here you would typically send a POST request to your API to schedule the consultation
+            // For now, we'll just simulate a successful scheduling
             toast.success("Consultation scheduled successfully!")
-            router.push("/dashboard") // Redirect to dashboard or confirmation page
+            router.push(`/${session?.user.role}`) // Redirect to dashboard or confirmation page
         } catch (error) {
             toast.error("Failed to schedule consultation. Please try again.")
         }
@@ -88,15 +98,13 @@ export default function Consultations() {
                         <div className="space-y-2">
                             <Label htmlFor="psychiatrist">Select a Psychiatrist</Label>
                             <Select
-                                onValueChange={(value) =>
-                                    setSelectedPsychiatrist(mockPsychiatrists.find((p) => p.id === value) || null)
-                                }
+                                onValueChange={(value) => setSelectedPsychiatrist(psychiatrists.find((p) => p.id === value) || null)}
                             >
                                 <SelectTrigger id="psychiatrist">
                                     <SelectValue placeholder="Select a psychiatrist" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {mockPsychiatrists.map((psychiatrist) => (
+                                    {psychiatrists.map((psychiatrist) => (
                                         <SelectItem key={psychiatrist.id} value={psychiatrist.id}>
                                             {psychiatrist.name} - ${psychiatrist.cost}/hour
                                         </SelectItem>

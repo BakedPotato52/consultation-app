@@ -41,6 +41,7 @@ async function main() {
                     role: "PSYCHIATRIST",
                     bio: faker.lorem.sentence(),
                     phoneNumber: faker.phone.number(),
+                    cost: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
                     emailNotifications: faker.datatype.boolean(),
                     smsNotifications: faker.datatype.boolean(),
                     image: faker.image.avatar(),
@@ -55,9 +56,9 @@ async function main() {
             data: {
                 patientId: patients[Math.floor(Math.random() * 15)].id,
                 psychiatristId: psychiatrists[Math.floor(Math.random() * 15)].id,
+                cost: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
                 startTime: faker.date.future(),
                 endTime: faker.date.future(),
-                cost: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
                 status: faker.helpers.arrayElement(["SCHEDULED", "COMPLETED", "CANCELLED"]),
             },
         });
