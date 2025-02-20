@@ -4,7 +4,6 @@ import type React from "react"
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Calendar } from "@/components/ui/calendar"
@@ -175,7 +174,7 @@ export default function Consultations() {
                                             disabled={isLoading}
                                         >
                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                                            {selectedDate ? selectedDate.toDateString() : <span>Pick a date</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
