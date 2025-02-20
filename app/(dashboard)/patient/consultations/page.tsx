@@ -37,7 +37,7 @@ export default function Consultations() {
     useEffect(() => {
         const fetchPsychiatrists = async () => {
             try {
-                const response = await fetch("/api/psychiatrist/profile")
+                const response = await fetch("/api/psychiatrist/consultations/createConsultation")
                 if (!response.ok) {
                     throw new Error("Failed to fetch psychiatrists data")
                 }
@@ -59,10 +59,24 @@ export default function Consultations() {
         }
 
         try {
-            // Here you would typically send a POST request to your API to schedule the consultation
-            // For now, we'll just simulate a successful scheduling
+            const response = await fetch('/api/consultations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    psychiatristId: selectedPsychiatrist.id,
+                    date: selectedDate,
+                    time: selectedTime,
+                    cost: selectedPsychiatrist.cost,
+                    patientId: session?.user.id,
+                }),
+            });
+
+            if (!response.ok) throw new Error('Failed to schedule consultation');
+
             toast.success("Consultation scheduled successfully!")
-            router.push(`/${session?.user.role}`) // Redirect to dashboard or confirmation page
+            router.push(`/${session?.user.role}`)
         } catch (error) {
             toast.error("Failed to schedule consultation. Please try again.")
         }
