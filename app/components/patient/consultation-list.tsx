@@ -4,12 +4,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import type { Consultation } from "@/types/consultations"
+import { ConsultationStatus } from "@prisma/client"
 
 interface ConsultationListProps {
     consultations: Consultation[]
 }
 
 export function ConsultationList({ consultations }: ConsultationListProps) {
+    const getStatusVariant = (status: ConsultationStatus) => {
+        switch (status) {
+            case ConsultationStatus.COMPLETED:
+                return "secondary"
+            case ConsultationStatus.CANCELLED:
+                return "destructive"
+            case ConsultationStatus.NO_SHOW:
+                return "destructive"
+            case ConsultationStatus.IN_PROGRESS:
+                return "default"
+            default:
+                return "default"
+        }
+    }
+
     return (
         <Table>
             <TableHeader>
@@ -18,6 +34,7 @@ export function ConsultationList({ consultations }: ConsultationListProps) {
                     <TableHead>Time</TableHead>
                     <TableHead>Psychiatrist</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Notes</TableHead>
                     <TableHead className="text-right">Cost</TableHead>
                 </TableRow>
             </TableHeader>
@@ -30,17 +47,12 @@ export function ConsultationList({ consultations }: ConsultationListProps) {
                         </TableCell>
                         <TableCell>Dr. {consultation.psychiatrist.name}</TableCell>
                         <TableCell>
-                            <Badge
-                                variant={
-                                    consultation.status === "COMPLETED"
-                                        ? "secondary"
-                                        : consultation.status === "CANCELLED"
-                                            ? "destructive"
-                                            : "default"
-                                }
-                            >
+                            <Badge variant={getStatusVariant(consultation.status)}>
                                 {consultation.status}
                             </Badge>
+                        </TableCell>
+                        <TableCell>
+                            {consultation.notes || consultation.cancellationReason || "-"}
                         </TableCell>
                         <TableCell className="text-right">${consultation.cost.toFixed(2)}</TableCell>
                     </TableRow>

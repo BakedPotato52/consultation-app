@@ -7,6 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  PATIENT
+  PSYCHIATRIST
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum ConsultationStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
 model User {
   id                        String         @id @default(cuid())
   name                      String?
@@ -14,39 +35,63 @@ model User {
   emailVerified             DateTime?
   image                     String?
   password                  String?
-  role                      String         @default("patient")
-  bio                       String?
+  role                      UserRole       @default(PATIENT)
+  status                    UserStatus     @default(ACTIVE)
+  bio                       String?        @db.Text
   phoneNumber               String?
   cost                      Float?
   emailNotifications        Boolean        @default(false)
   smsNotifications          Boolean        @default(false)
+  lastLoginAt               DateTime?
   createdAt                 DateTime       @default(now())
   updatedAt                 DateTime       @updatedAt
+  deletedAt                 DateTime?
+  createdBy                 String? // Admin who created the user
+  updatedBy                 String? // Admin who last updated the user
+  deletedBy                 String? // Admin who deleted the user
   patientConsultations      Consultation[] @relation("PatientConsultations")
   psychiatristConsultations Consultation[] @relation("PsychiatristConsultations")
+  createdUsers              User[]         @relation("UserCreation")
+  updatedUsers              User[]         @relation("UserUpdates")
+  deletedUsers              User[]         @relation("UserDeletion")
+  createdByUser             User?          @relation("UserCreation", fields: [createdBy], references: [id])
+  updatedByUser             User?          @relation("UserUpdates", fields: [updatedBy], references: [id])
+  deletedByUser             User?          @relation("UserDeletion", fields: [deletedBy], references: [id])
+  createdConsultations      Consultation[] @relation("ConsultationCreation")
+  updatedConsultations      Consultation[] @relation("ConsultationUpdates")
+  deletedConsultations      Consultation[] @relation("ConsultationDeletion")
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Consultation {
-  id             String             @id @default(cuid())
-  patientId      String
-  psychiatristId String
-  startTime      DateTime
-  endTime        DateTime
-  cost           Float
-  status         ConsultationStatus @default(SCHEDULED)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  patient        User               @relation("PatientConsultations", fields: [patientId], references: [id])
-  psychiatrist   User               @relation("PsychiatristConsultations", fields: [psychiatristId], references: [id])
-}
+  id                 String             @id @default(cuid())
+  patientId          String
+  psychiatristId     String
+  startTime          DateTime
+  endTime            DateTime
+  cost               Float
+  status             ConsultationStatus @default(SCHEDULED)
+  notes              String?            @db.Text
+  cancellationReason String?            @db.Text
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  deletedAt          DateTime?
+  createdBy          String? // Admin who created the consultation
+  updatedBy          String? // Admin who last updated the consultation
+  deletedBy          String? // Admin who deleted the consultation
+  patient            User               @relation("PatientConsultations", fields: [patientId], references: [id])
+  psychiatrist       User               @relation("PsychiatristConsultations", fields: [psychiatristId], references: [id])
+  createdByUser      User?              @relation("ConsultationCreation", fields: [createdBy], references: [id])
+  updatedByUser      User?              @relation("ConsultationUpdates", fields: [updatedBy], references: [id])
+  deletedByUser      User?              @relation("ConsultationDeletion", fields: [deletedBy], references: [id])
 
-enum Role {
-  PATIENT
-  PSYCHIATRIST
-}
-
-enum ConsultationStatus {
-  SCHEDULED
-  COMPLETED
-  CANCELLED
+  @@index([patientId])
+  @@index([psychiatristId])
+  @@index([status])
+  @@index([startTime])
+  @@index([createdAt])
 }

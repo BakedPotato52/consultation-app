@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { UserRole } from "@prisma/client"
 
 export function RoleRedirect() {
     const { data: session, status } = useSession()
@@ -19,12 +20,14 @@ export function RoleRedirect() {
             return
         }
 
-        const role = session?.user?.role
-        const redirectPath = role === "PATIENT"
+        const role = session?.user?.role as UserRole
+        const redirectPath = role === UserRole.PATIENT
             ? "/patient"
-            : role === "PSYCHIATRIST"
+            : role === UserRole.PSYCHIATRIST
                 ? "/psychiatrist"
-                : "/login"
+                : role === UserRole.ADMIN
+                    ? "/admin"
+                    : "/login"
 
         hasNavigated.current = true
         router.replace(redirectPath)
